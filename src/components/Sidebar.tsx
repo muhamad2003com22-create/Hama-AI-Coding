@@ -143,31 +143,32 @@ export default function Sidebar({ activeSection, setActiveSection, onAdminOpen, 
     <aside className={cn(
       "fixed z-50 transition-all duration-500",
       // Mobile: Bottom Bar
-      "bottom-0 left-0 right-0 h-16 md:h-auto flex flex-row md:flex-col items-center justify-around md:justify-start px-4 md:px-0 py-0 md:py-8 gap-0 md:gap-12 bg-[#020617]/80 backdrop-blur-3xl border-t md:border border-white/10 rounded-t-3xl md:rounded-[40px] overflow-visible md:overflow-hidden shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl",
+      "bottom-0 left-0 right-0 h-20 md:h-auto flex flex-row md:flex-col items-center justify-around md:justify-start px-2 sm:px-4 md:px-0 py-0 md:py-8 gap-0 md:gap-12 bg-[#020617]/90 backdrop-blur-3xl border-t md:border border-white/10 rounded-t-3xl md:rounded-[40px] shadow-[0_-10px_40px_rgba(0,0,0,0.5)] md:shadow-2xl",
       // Desktop: Fixed Vertical Sidebar
       "md:top-6 md:bottom-6 md:w-24 px-2",
       sideClass
     )}>
       <Logo />
 
-      <nav className="flex-1 flex flex-row md:flex-col gap-2 md:gap-6 items-center justify-center">
+      <nav className="flex-1 flex flex-row md:flex-col gap-1 sm:gap-2 md:gap-6 items-center justify-center">
         {navItems.map((item) => (
           <button
             key={item.id}
             onClick={() => setActiveSection(item.id)}
             className={cn(
-              "p-3 rounded-xl transition-all duration-75 transform-gpu relative group touch-manipulation active:scale-90",
+              "flex flex-col md:flex-row items-center justify-center min-w-[64px] p-2 md:p-3 rounded-xl transition-all duration-75 transform-gpu relative group touch-manipulation active:scale-90",
               activeSection === item.id 
                 ? "bg-white/10 text-cyan-400" 
                 : "text-slate-400 hover:text-white"
             )}
             title={item.label}
           >
-            <item.icon size={24} />
+            <item.icon size={22} className="md:w-6 md:h-6" />
+            <span className="text-[10px] mt-1 md:hidden font-medium opacity-80">{item.label}</span>
             {activeSection === item.id && (
               <motion.div 
                 layoutId="active-nav"
-                className="absolute md:right-0 bottom-0 md:top-1/4 h-1 md:h-1/2 w-1/2 md:w-1 bg-cyan-400 rounded-t-full md:rounded-l-full shadow-[0_0_10px_#22d3ee] left-1/4 md:left-auto"
+                className="absolute md:right-0 bottom-0 md:top-1/4 h-0.5 md:h-1/2 w-8 md:w-1 bg-cyan-400 rounded-t-full md:rounded-l-full shadow-[0_0_10px_#22d3ee] left-1/2 -translate-x-1/2 md:translate-x-0 md:left-auto"
               />
             )}
             <span className="hidden md:block absolute left-full ml-4 px-2 py-1 rounded bg-slate-800 text-xs opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap">

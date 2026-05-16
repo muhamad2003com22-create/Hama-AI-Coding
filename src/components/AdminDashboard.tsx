@@ -243,25 +243,25 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
               <motion.div 
                 key={proj.id} 
                 whileTap={{ scale: 0.98, transition: { duration: 0.075 } }}
-                className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-cyan-500/30 transition-all duration-75 transform-gpu touch-manipulation"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-cyan-500/30 transition-all duration-75 transform-gpu touch-manipulation gap-4"
               >
                 <div className="flex items-center gap-4 text-sm font-medium">
                    {proj.image ? (
-                     <img src={proj.image} className="w-10 h-10 rounded object-cover" />
+                     <img src={proj.image} className="w-10 h-10 rounded object-cover flex-shrink-0" alt="" />
                    ) : (
-                     <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center text-cyan-400">
+                     <div className="w-10 h-10 rounded bg-white/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
                        <Globe size={14} />
                      </div>
                    )}
-                   <div>
-                     <p>{proj.title}</p>
-                     <p className="text-[10px] text-slate-500 font-mono italic">{proj.stack.join(', ')}</p>
+                   <div className="min-w-0">
+                     <p className="truncate">{proj.title}</p>
+                     <p className="text-[10px] text-slate-500 font-mono italic truncate">{proj.stack.join(', ')}</p>
                    </div>
                 </div>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto justify-end border-t border-white/5 sm:border-0 pt-2 sm:pt-0">
                   <button 
                     onClick={() => deleteProject(proj.id)}
-                    className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                    className="p-2 text-slate-400 hover:text-red-400 transition-colors bg-white/5 sm:bg-transparent rounded-lg"
                   >
                     <Trash2 size={16} />
                   </button>
@@ -289,28 +289,28 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
               <motion.div 
                 key={social.id} 
                 whileTap={{ scale: 0.98, transition: { duration: 0.075 } }}
-                className="flex items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-cyan-500/30 transition-all duration-75 transform-gpu touch-manipulation"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 bg-white/5 rounded-xl border border-white/5 group hover:border-cyan-500/30 transition-all duration-75 transform-gpu touch-manipulation gap-4"
               >
-                <span className="font-medium text-sm flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-cyan-400">
+                <span className="font-medium text-sm flex items-center gap-3 min-w-0">
+                  <div className="w-8 h-8 rounded-lg bg-white/10 flex items-center justify-center text-cyan-400 flex-shrink-0">
                     {React.createElement(getIcon(social.icon), { size: 16 })}
                   </div>
-                  <div>
-                    <p>{social.name}</p>
-                    <p className="text-[10px] text-slate-500 truncate max-w-[150px]">{social.link}</p>
+                  <div className="min-w-0 overflow-hidden">
+                    <p className="truncate">{social.name}</p>
+                    <p className="text-[10px] text-slate-500 truncate">{social.link}</p>
                   </div>
                 </span>
-                <div className="flex gap-2">
+                <div className="flex gap-2 w-full sm:w-auto justify-end border-t border-white/5 sm:border-0 pt-2 sm:pt-0">
                   <button 
                     onClick={() => handleEditSocial(social)}
-                    className="p-2 text-slate-400 hover:text-cyan-400 transition-colors"
+                    className="p-2 text-slate-400 hover:text-cyan-400 transition-colors bg-white/5 sm:bg-transparent rounded-lg"
                     title="Edit Social"
                   >
                     <Edit2 size={16} />
                   </button>
                   <button 
                     onClick={() => deleteSocial(social.id)}
-                    className="p-2 text-slate-400 hover:text-red-400 transition-colors"
+                    className="p-2 text-slate-400 hover:text-red-400 transition-colors bg-white/5 sm:bg-transparent rounded-lg"
                   >
                     <Trash2 size={16} />
                   </button>

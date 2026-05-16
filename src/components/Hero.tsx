@@ -1,6 +1,7 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
 import { Sparkles, ArrowRight, Code, Cpu, Smartphone, User } from 'lucide-react';
+import { cn } from '../lib/utils';
 import TiltCard from './TiltCard';
 
 export default function Hero({ profileImage = '/profile.jpg' }: { profileImage?: string }) {
@@ -33,9 +34,12 @@ export default function Hero({ profileImage = '/profile.jpg' }: { profileImage?:
             <h2 className="text-2xl md:text-3xl text-slate-400 font-light">
               {t('hero.greeting')} <span className="text-white font-semibold">{t('hero.name')}</span>
             </h2>
-            <h1 className="text-4xl md:text-7xl font-bold tracking-tight leading-tight">
+            <h1 className="text-3xl sm:text-4xl md:text-7xl font-bold tracking-tight leading-tight">
               {t('hero.title').split(' - ').map((part, i) => (
-                <span key={i} className={i === 0 ? 'neon-text block' : 'block text-xl md:text-3xl text-slate-400 mt-2 font-mono tracking-widest'}>
+                <span key={i} className={cn(
+                  "block truncate",
+                  i === 0 ? 'neon-text' : 'text-lg sm:text-xl md:text-3xl text-slate-400 mt-2 font-mono tracking-widest'
+                )}>
                   {part}
                 </span>
               ))}
