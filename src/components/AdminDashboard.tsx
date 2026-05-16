@@ -169,6 +169,8 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
     setSocials(socials.filter(s => s.id !== id));
   };
 
+  const isDefaultImage = profileImage === '/profile.jpg' || !profileImage;
+
   return (
     <section className="py-12 space-y-12">
       <div className="flex justify-between items-center">
@@ -182,9 +184,15 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
       <div className="glass-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 border-cyan-500/20">
         <div className="relative group">
           <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden border-2 border-cyan-500/30 glow-cyan">
-            <img src={profileImage} alt="Current Profile" className="w-full h-full object-cover" />
+            {isDefaultImage ? (
+              <div className="w-full h-full bg-white/10 flex items-center justify-center">
+                <LucideIcons.User size={48} className="text-cyan-400 opacity-30" />
+              </div>
+            ) : (
+              <img src={profileImage} alt="Current Profile" className="w-full h-full object-cover" />
+            )}
           </div>
-          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-3xl">
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center rounded-3xl pointer-events-none">
             <LucideIcons.Camera className="text-white" size={32} />
           </div>
         </div>

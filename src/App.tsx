@@ -94,12 +94,12 @@ export default function App() {
     switch (activeSection) {
       case 'home':
         return (
-          <>
+          <div className="flex flex-col gap-y-16 md:gap-y-24">
             <Hero profileImage={profileImage} />
             <TechStack />
             <Projects projects={projects} />
             <SocialHub socials={socials} />
-          </>
+          </div>
         );
       case 'projects':
         return <Projects projects={projects} />;
@@ -114,12 +114,12 @@ export default function App() {
     <div className="min-h-screen relative selection:bg-cyan-500/30">
       {/* Premium 3D Workspace Background */}
       <div className="bg-mesh" />
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-none z-[-1]" />
-      <div className="scanline absolute inset-0 z-[-1] opacity-20 pointer-events-none" />
+      <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-none z-[-10]" />
+      <div className="scanline absolute inset-0 z-[-10] opacity-20 pointer-events-none" />
       
       {/* Decorative Orbs */}
-      <div className="fixed top-[-10%] left-[-5%] w-[60vw] h-[60vw] bg-cyan-500/10 rounded-full blur-[150px] pointer-events-none animate-pulse z-[-1]" />
-      <div className="fixed bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse z-[-1]" />
+      <div className="fixed top-[-10%] left-[-5%] w-[60vw] h-[60vw] bg-cyan-500/10 rounded-full blur-[150px] pointer-events-none animate-pulse z-[-10]" />
+      <div className="fixed bottom-[-10%] right-[-5%] w-[50vw] h-[50vw] bg-blue-600/10 rounded-full blur-[120px] pointer-events-none animate-pulse z-[-10]" />
       
       {/* Interactive 3D Floating Shapes */}
       <motion.div 
@@ -129,7 +129,7 @@ export default function App() {
           scale: [1, 1.1, 1]
         }}
         transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-        className="fixed top-1/4 right-1/4 w-32 h-32 border border-cyan-500/10 rounded-3xl backdrop-blur-3xl rotate-45 pointer-events-none z-[-1]"
+        className="fixed top-1/4 right-1/4 w-32 h-32 border border-cyan-500/10 rounded-3xl backdrop-blur-3xl rotate-45 pointer-events-none z-[-10]"
       />
       <motion.div 
         animate={{ 
@@ -138,7 +138,7 @@ export default function App() {
           scale: [1, 0.8, 1]
         }}
         transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-        className="fixed bottom-1/4 left-1/3 w-24 h-24 border border-blue-500/10 rounded-full backdrop-blur-2xl pointer-events-none z-[-1]"
+        className="fixed bottom-1/4 left-1/3 w-24 h-24 border border-blue-500/10 rounded-full backdrop-blur-2xl pointer-events-none z-[-10]"
       />
 
       <Sidebar 
@@ -150,7 +150,7 @@ export default function App() {
       />
 
       <main className={cn(
-        "px-6 md:px-12 lg:px-24 pb-32 md:pb-12 transition-all duration-500 relative z-10",
+        "px-4 sm:px-6 md:px-12 lg:px-24 pb-32 md:pb-12 transition-all duration-500 relative z-10",
         i18n.dir() === 'rtl' ? "md:mr-28 lg:md:mr-32" : "md:ml-28 lg:md:ml-32"
       )}>
         <div className="max-w-7xl mx-auto">
@@ -181,10 +181,10 @@ export default function App() {
 
       {/* Footer Branding */}
       <footer className={cn(
-        "py-12 border-t border-white/5 mb-16 md:mb-0",
+        "py-12 border-t border-white/5 mb-24 md:mb-0",
         i18n.dir() === 'rtl' ? "md:mr-28 lg:md:mr-32" : "md:ml-28 lg:md:ml-32"
       )}>
-        <div className="max-w-7xl mx-auto px-6 opacity-30 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-[0.2em] font-mono">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 opacity-30 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-[0.2em] font-mono">
           <span>&copy; 2026 HAMA PORTFOLIO</span>
           <span>BUILT WITH PRECISION & INTELLIGENCE</span>
           <span>EST. KURDISTAN</span>

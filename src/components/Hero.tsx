@@ -1,10 +1,12 @@
 import { motion } from 'motion/react';
 import { useTranslation } from 'react-i18next';
-import { Sparkles, ArrowRight, Code, Cpu, Smartphone } from 'lucide-react';
+import { Sparkles, ArrowRight, Code, Cpu, Smartphone, User } from 'lucide-react';
 import TiltCard from './TiltCard';
 
 export default function Hero({ profileImage = '/profile.jpg' }: { profileImage?: string }) {
   const { t } = useTranslation();
+
+  const isDefaultImage = profileImage === '/profile.jpg' || !profileImage;
 
   const stats = [
     { label: 'Web Apps', value: '50+', icon: Code },
@@ -72,13 +74,21 @@ export default function Hero({ profileImage = '/profile.jpg' }: { profileImage?:
             <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-[480px] md:h-[480px]">
               <div className="absolute inset-0 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full blur-[100px] opacity-20 floating-element" />
               <div className="absolute inset-4 glass-card flex flex-col items-center justify-center overflow-hidden">
-                <img 
-                  src={profileImage} 
-                  alt="Hama Profile"
-                  className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="z-10 text-center space-y-2 md:space-y-4">
+                {isDefaultImage ? (
+                  <div className="absolute inset-0 flex items-center justify-center bg-slate-900/50">
+                    <div className="p-8 md:p-12 rounded-full bg-cyan-500/10 border border-cyan-500/20 glow-cyan flex items-center justify-center">
+                      <User size={64} className="text-cyan-400 opacity-40 animate-pulse" />
+                    </div>
+                  </div>
+                ) : (
+                  <img 
+                    src={profileImage} 
+                    alt="Hama Profile"
+                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none" />
+                <div className="z-10 text-center space-y-2 md:space-y-4 pointer-events-none">
                   <div className="w-16 h-16 md:w-24 md:h-24 mx-auto rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center floating-element">
                       <Cpu size={32} className="text-cyan-400 md:hidden" />
                       <Cpu size={48} className="text-cyan-400 hidden md:block" />
