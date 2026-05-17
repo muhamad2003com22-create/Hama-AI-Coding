@@ -11,6 +11,7 @@ import AdminModal from './components/AdminModal';
 import AdminDashboard from './components/AdminDashboard';
 import { Project, SocialLink } from './types';
 import { cn } from './lib/utils';
+import { db, collection, onSnapshot, query, orderBy, doc } from './lib/firebase';
 import './lib/i18n';
 
 const INITIAL_PROJECTS: Project[] = [
@@ -59,10 +60,11 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // Local state for app data (Firebase removed)
+  // States managed by Admin (Firebase sync with loading handling)
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   const [socials, setSocials] = useState<SocialLink[]>(INITIAL_SOCIALS);
   const [profileImage, setProfileImage] = useState('/profile.jpg');
+  const [isLoading, setIsLoading] = useState(true);
 
   // Sync RTL/LTR direction based on current language
   useEffect(() => {
@@ -71,21 +73,84 @@ export default function App() {
     document.documentElement.lang = i18n.language;
   }, [i18n.language]);
 
+  // Firebase Real-time Sync
+  useEffect(() => {
+    setIsLoading(true);
+    
+    const qProjects = query(collection(db, 'projects'), orderBy('createdAt', 'desc'));
+    const unsubscribeProjects = onSnapshot(qProjects, (snapshot) => {
+      const projectsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as Project[];
+      
+      // Fallback to defaults if Firestore collection is empty
+      if (projectsData.length > 0) {
+        setProjects(projectsData);
+      } else {
+        setProjects(INITIAL_PROJECTS);
+      }
+      setIsLoading(false);
+    }, (error) => {
+      console.error("Projects sync error:", error);
+      setIsLoading(false);
+    });
+
+    const qSocials = query(collection(db, 'socials'), orderBy('createdAt', 'asc'));
+    const unsubscribeSocials = onSnapshot(qSocials, (snapshot) => {
+      const socialsData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      })) as SocialLink[];
+      
+      if (socialsData.length > 0) {
+        setSocials(socialsData);
+      } else {
+        setSocials(INITIAL_SOCIALS);
+      }
+    });
+
+    const unsubscribeSettings = onSnapshot(doc(db, 'settings', 'config'), (snapshot) => {
+      if (snapshot.exists()) {
+        const data = snapshot.data();
+        if (data.profileImage) {
+          setProfileImage(data.profileImage);
+        }
+      }
+    });
+
+    return () => {
+      unsubscribeProjects();
+      unsubscribeSocials();
+      unsubscribeSettings();
+    };
+  }, []);
+
   const handleLogout = () => {
     setIsAdmin(false);
     setActiveSection('home');
   };
 
   const renderContent = () => {
+    if (isLoading && activeSection !== 'admin') {
+      return (
+        <div className="min-h-[60vh] flex flex-col items-center justify-center gap-6">
+          <div className="relative w-20 h-20">
+            <div className="absolute inset-0 border-4 border-cyan-500/10 rounded-full" />
+            <div className="absolute inset-0 border-4 border-t-cyan-500 rounded-full animate-spin glow-cyan" />
+            <div className="absolute inset-[-10px] border border-cyan-500/20 rounded-full animate-pulse" />
+          </div>
+          <p className="text-cyan-400 font-mono text-xs tracking-[0.3em] animate-pulse">SYNCHRONIZING WITH MATRIX...</p>
+        </div>
+      );
+    }
+
     if (isAdmin && activeSection === 'admin') {
       return (
         <AdminDashboard 
           projects={projects} 
-          setProjects={setProjects}
           socials={socials}
-          setSocials={setSocials}
           profileImage={profileImage}
-          setProfileImage={setProfileImage}
           onLogout={handleLogout}
         />
       );
@@ -156,19 +221,19 @@ export default function App() {
         "px-4 lg:px-24 pb-8 transition-all duration-500 relative z-10",
         i18n.dir() === 'rtl' ? "lg:mr-32" : "lg:ml-32"
       )}>
-        <div className="max-w-7xl mx-auto overflow-hidden">
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={activeSection + i18n.language}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.15, ease: "easeOut" }}
-            >
-              {renderContent()}
-            </motion.div>
-          </AnimatePresence>
-        </div>
+          <div className="max-w-7xl mx-auto overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={activeSection + i18n.language}
+                initial={{ opacity: 0, scale: 0.98 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 1.02 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
+              >
+                {renderContent()}
+              </motion.div>
+            </AnimatePresence>
+          </div>
       </main>
 
       <AIBot />
@@ -188,7 +253,7 @@ export default function App() {
         i18n.dir() === 'rtl' ? "lg:mr-32" : "lg:ml-32"
       )}>
         <div className="max-w-7xl mx-auto px-4 lg:px-12 opacity-30 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-[0.2em] font-mono">
-          <span>&copy; 2026 HAMA PORTFOLIO</span>
+          <span>&copy; 2026 HAMA</span>
           <span>BUILT WITH PRECISION & INTELLIGENCE</span>
           <span>EST. KURDISTAN</span>
         </div>

@@ -19,7 +19,7 @@ export default function TechStack() {
         <div className="h-1 w-20 bg-cyan-500 rounded-full" />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 max-w-lg mx-auto lg:max-w-none">
         {stack.map((item, i) => (
           <TiltCard key={item.name} intensity={item.glow ? 20 : 10}>
              <motion.div

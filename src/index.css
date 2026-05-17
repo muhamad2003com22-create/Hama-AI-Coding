@@ -11,7 +11,7 @@
     --bg-dark: 2, 6, 23;
   }
 
-  :root:not(.light) {
+  :root {
     --bg: #020617;
     --text: #e2e8f0;
     --card-bg: rgba(255, 255, 255, 0.03);
@@ -21,30 +21,25 @@
     --mesh-end: rgba(2, 6, 23, 0.95);
     --overlay-bg: rgba(0, 0, 0, 0.4);
   }
-
-  :root.light {
-    --bg: #f8fafc;
-    --text: #0f172a;
-    --card-bg: rgba(0, 0, 0, 0.03);
-    --card-border: rgba(0, 0, 0, 0.1);
-    --button-bg: rgba(0, 0, 0, 0.05);
-    --glass-shadow: rgba(0, 0, 0, 0.1);
-    --mesh-end: rgba(248, 250, 252, 0.95);
-    --overlay-bg: rgba(255, 255, 255, 0.4);
-  }
   
   body {
-    @apply text-slate-200 overflow-x-hidden transition-colors duration-500 max-w-full;
+    @apply text-slate-200 overflow-x-hidden transition-colors duration-500 max-w-full m-0 p-0;
     background-color: var(--bg);
     color: var(--text);
     font-family: var(--font-sans);
+    overscroll-behavior-y: none;
   }
 
   html {
-    @apply overflow-x-hidden max-w-full;
+    @apply overflow-x-hidden max-w-full m-0 p-0;
     scroll-behavior: smooth;
     touch-action: manipulation;
     background-color: var(--bg);
+  }
+
+  /* Force touch manipulation globally for fast response */
+  * {
+    touch-action: manipulation;
   }
 
   /* Kurdish Typography Optimization */

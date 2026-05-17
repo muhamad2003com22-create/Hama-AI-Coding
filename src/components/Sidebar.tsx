@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
+import LogoComponent from './Logo';
 import { 
   Home, 
   Briefcase, 
@@ -7,7 +8,6 @@ import {
   Settings, 
   Globe, 
   LayoutDashboard,
-  X,
   LogOut,
   Moon,
   Sun
@@ -63,100 +63,6 @@ export default function Sidebar({ activeSection, setActiveSection, onAdminOpen, 
     { id: 'socials', icon: Share2, label: t('nav.socials') },
   ];
 
-    const Logo = () => (
-      <motion.div
-        animate={{ 
-          y: [0, -4, 0],
-          rotate: [2, -2, 2]
-        }}
-        transition={{ 
-          duration: 6, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
-        }}
-        className="hidden lg:flex w-16 h-16 items-center justify-center relative group"
-      >
-        {/* Ambient Glow background */}
-        <div className="absolute inset-0 bg-cyan-500/10 blur-2xl rounded-full scale-50 group-hover:scale-100 transition-transform duration-700" />
-        
-        <svg viewBox="0 0 100 100" className="w-12 h-12 relative z-10 transition-transform duration-500 group-hover:scale-110">
-          <defs>
-            <linearGradient id="hamaLogoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-              <stop offset="0%" stopColor="#22d3ee" />
-              <stop offset="100%" stopColor="#3b82f6" />
-            </linearGradient>
-            <filter id="logoGlowEffect" x="0" y="0" width="200%" height="200%">
-              <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
-              <feComponentTransfer in="blur" result="glow">
-                <feFuncA type="linear" slope="2" />
-              </feComponentTransfer>
-              <feMerge>
-                <feMergeNode in="glow" />
-                <feMergeNode in="SourceGraphic" />
-              </feMerge>
-            </filter>
-          </defs>
-
-          {/* Abstract H Monogram Elements */}
-          <path 
-            d="M25,20 L25,80" 
-            stroke="url(#hamaLogoGradient)" 
-            strokeWidth="8" 
-            strokeLinecap="round"
-            className="filter-[url(#logoGlowEffect)]"
-          />
-          <path 
-            d="M75,20 L75,80" 
-            stroke="url(#hamaLogoGradient)" 
-            strokeWidth="8" 
-            strokeLinecap="round"
-          />
-          <path 
-            d="M25,50 L75,50" 
-            stroke="#22d3ee" 
-            strokeWidth="4" 
-            strokeLinecap="round"
-          />
-          
-          {/* Cyber/Code Brackets */}
-          <motion.path 
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            d="M15,40 L5,50 L15,60" 
-            stroke="#22d3ee" 
-            strokeWidth="3" 
-            fill="none" 
-          />
-          <motion.path 
-            initial={{ pathLength: 0 }}
-            animate={{ pathLength: 1 }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-            d="M85,40 L95,50 L85,60" 
-            stroke="#22d3ee" 
-            strokeWidth="3" 
-            fill="none" 
-          />
-          
-          {/* Central Pulsating AI Node */}
-          <motion.circle 
-            cx="50" cy="50" r="8" 
-            fill="#22d3ee"
-            animate={{ 
-              r: [6, 10, 6],
-              opacity: [0.5, 1, 0.5]
-            }}
-            transition={{ 
-              duration: 2.5, 
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-            style={{ filter: 'drop-shadow(0 0 8px #22d3ee)' }}
-          />
-        </svg>
-      </motion.div>
-    );
-
   const sideClass = i18n.dir() === 'rtl' ? "lg:right-4" : "lg:left-4";
 
   return (
@@ -170,7 +76,9 @@ export default function Sidebar({ activeSection, setActiveSection, onAdminOpen, 
     )}
     style={{ backgroundColor: `rgba(var(--bg-rgb, ${theme === 'dark' ? '2, 6, 23' : '248, 250, 252'}), 0.9)` }}
     >
-      <Logo />
+      <div className="hidden lg:block">
+        <LogoComponent className="w-16 h-16" />
+      </div>
 
       <nav className="flex-1 flex flex-row lg:flex-col gap-1 sm:gap-2 lg:gap-6 items-center justify-center">
         {navItems.map((item) => (

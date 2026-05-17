@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { X, Lock, User, ShieldCheck } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
@@ -17,13 +17,27 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
   const [error, setError] = useState('');
   const [isFlipped, setIsFlipped] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [attempts, setAttempts] = useState(0);
+  const [lockoutTimer, setLockoutTimer] = useState(0);
+
+  useEffect(() => {
+    let timer: NodeJS.Timeout;
+    if (lockoutTimer > 0) {
+      timer = setInterval(() => {
+        setLockoutTimer((prev) => prev - 1);
+      }, 1000);
+    }
+    return () => clearInterval(timer);
+  }, [lockoutTimer]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (lockoutTimer > 0) return;
+    
     setIsLoading(true);
     setError('');
 
-    // Hardcoded local credentials as requested
+    // Hardcoded local credentials
     const AUTH_USERNAME = 'hamait';
     const AUTH_PASSWORD = 'Hamawwe0770';
 
@@ -33,11 +47,19 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
         onClose();
         setUsername('');
         setPassword('');
+        setAttempts(0);
       } else {
-        setError('Access Denied. Invalid Credentials.');
+        const nextAttempts = attempts + 1;
+        setAttempts(nextAttempts);
+        if (nextAttempts >= 3) {
+          setLockoutTimer(60);
+          setError('SYSTEM LOCKED: Too many failed attempts. Access denied for 60s.');
+        } else {
+          setError(`Access Denied. Invalid Credentials. (${3 - nextAttempts} attempts remaining)`);
+        }
       }
       setIsLoading(false);
-    }, 500);
+    }, 600);
   };
 
 
@@ -125,16 +147,18 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
 
                   <button
                     type="submit"
-                    disabled={isLoading}
+                    disabled={isLoading || lockoutTimer > 0}
                     className={cn(
                       "w-full py-4 rounded-xl font-bold shadow-lg transition-all duration-75 transform-gpu touch-manipulation active:scale-[0.98] flex items-center justify-center gap-3",
-                      isLoading 
-                        ? "bg-slate-800 text-slate-500 cursor-not-allowed" 
+                      (isLoading || lockoutTimer > 0)
+                        ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none" 
                         : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:shadow-[0_0_20px_#22d3ee]"
                     )}
                   >
                     {isLoading ? (
                       <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    ) : lockoutTimer > 0 ? (
+                      `Locked (${lockoutTimer}s)`
                     ) : (
                       <>
                         <ShieldCheck size={20} />

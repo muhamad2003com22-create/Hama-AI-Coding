@@ -26,28 +26,30 @@ export default function AIBot() {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
+    const query = userMessage.toLowerCase();
     setInput('');
     setMessages(prev => [...prev, { role: 'user', text: userMessage }]);
     setIsLoading(true);
 
-    try {
-      const history = messages.map(msg => ({
-        role: msg.role === 'bot' ? 'model' : 'user',
-        parts: [{ text: msg.text }]
-      }));
+    // Fake typing delay for local processing
+    setTimeout(() => {
+      let responseText = "";
 
-      const response = await fetch('/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: userMessage, history }),
-      });
-      const data = await response.json();
-      setMessages(prev => [...prev, { role: 'bot', text: data.text || 'Sorry, I am having trouble connecting.' }]);
-    } catch (error) {
-      setMessages(prev => [...prev, { role: 'bot', text: 'An error occurred. Please try again later.' }]);
-    } finally {
+      if (query.includes('سڵاو') || query.includes('چۆنی') || query.includes('hello') || query.includes('hi')) {
+        responseText = "سڵاو! من یاریدەدەری زیرەکی حەمەم. بەخێربێیت بۆ فەزای کارەکەی من. چۆن دەتوانم یارمەتیت بدەم؟\n\nHello! I am Hama's AI assistant. Welcome to my workspace. How can I help you today?";
+      } else if (query.includes('python') || query.includes('js') || query.includes('زمان') || query.includes('skills') || query.includes('پڕۆگرامینگ')) {
+        responseText = "حەمه شارەزایی تەواوی هەیە لە زمانەکانی: Python, JavaScript, HTML, CSS. هەروەها کار بە فڕەیمۆرکەکانی React و Next.js دەکات.\n\nHama is proficient in Python, JavaScript, HTML, and CSS. He works extensively with React and Next.js frameworks.";
+      } else if (query.includes('پڕۆژە') || query.includes('project') || query.includes('works') || query.includes('کارەکان')) {
+        responseText = "دەتوانیت سەیری بەشی پڕۆژەکان بکەیت لە مێنیوەکە بۆ بینینی نوێترین کارەکانم کە لە ڕێگەی Firestore ـەوە بەڕێوەدەبرێن.\n\nYou can visit the Projects section in the navigation menu to see my latest work, which is dynamically managed via Firestore.";
+      } else if (query.includes('پەیوەندی') || query.includes('contact') || query.includes('telegram') || query.includes('social')) {
+        responseText = "دەتوانیت لە ڕێگەی تێلیگرام یان ئینستاگرام پەیوەندیم پێوە بکەیت، دوگمەکان لە بەشی خوارەوەی پەیجەکە بەردەستن.\n\nYou can reach me via Telegram or Instagram using the buttons at the bottom of the page.";
+      } else {
+        responseText = "ببوورە تێنەگەیشتم. دەتوانیت دەربارەی کارەکانم یان زمانەکانی پڕۆگرامینگ یان پەیوەندی پرسیار بکەیت.\n\nI'm sorry, I didn't quite catch that. You can ask about my projects, programming skills, or how to contact me.";
+      }
+
+      setMessages(prev => [...prev, { role: 'bot', text: responseText }]);
       setIsLoading(false);
-    }
+    }, 800);
   };
 
   return (

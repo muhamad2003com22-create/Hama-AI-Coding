@@ -6,23 +6,20 @@ import { useTranslation } from 'react-i18next';
 import { Project, SocialLink } from '../types';
 import { sanitizeInput, isValidSecureURL, formatURL } from '../lib/utils';
 
+import { db, setDoc, doc, collection, deleteDoc, updateDoc, OperationType, handleFirestoreError } from '../lib/firebase';
+import { serverTimestamp } from 'firebase/firestore';
+
 interface AdminDashboardProps {
   projects: Project[];
-  setProjects: (projects: Project[]) => void;
   socials: SocialLink[];
-  setSocials: (socials: SocialLink[]) => void;
   profileImage: string;
-  setProfileImage: (img: string) => void;
   onLogout: () => void;
 }
 
 export default function AdminDashboard({ 
   projects, 
-  setProjects, 
   socials, 
-  setSocials, 
   profileImage, 
-  setProfileImage, 
   onLogout 
 }: AdminDashboardProps) {
   const { t } = useTranslation();
@@ -76,15 +73,23 @@ export default function AdminDashboard({
     if (lowercaseUrl.includes('tiktok.com')) return { name: 'TikTok', icon: 'Music2' };
     if (lowercaseUrl.includes('snapchat.com')) return { name: 'Snapchat', icon: 'Ghost' };
     if (lowercaseUrl.includes('wa.me') || lowercaseUrl.includes('whatsapp')) return { name: 'WhatsApp', icon: 'MessageCircle' };
-    return { name: 'Social Link', icon: 'Share2' };
+    return { name: 'Social Link', icon: 'Share' };
   };
 
-  const handleProfileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleProfileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      reader.onloadend = () => {
-        setProfileImage(reader.result as string);
+      reader.onloadend = async () => {
+        const base64 = reader.result as string;
+        try {
+          await setDoc(doc(db, 'settings', 'config'), {
+            profileImage: base64,
+            lastUpdated: serverTimestamp()
+          });
+        } catch (error) {
+          handleFirestoreError(error, OperationType.WRITE, 'settings/config');
+        }
       };
       reader.readAsDataURL(file);
     }
@@ -101,7 +106,7 @@ export default function AdminDashboard({
     }
   };
 
-  const handleAddProject = (e: React.FormEvent) => {
+  const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -112,24 +117,36 @@ export default function AdminDashboard({
       return;
     }
 
-    const project: Project = {
-      id: Date.now().toString(),
+    const projectId = Date.now().toString();
+    const projectData = {
       title: sanitizeInput(newProject.title),
       link: formattedLink,
       image: newProject.image || '',
-      stack: sanitizeInput(newProject.stack).split(',').map(s => s.trim())
+      stack: sanitizeInput(newProject.stack).split(',').map(s => s.trim()),
+      createdAt: serverTimestamp()
     };
 
-    setProjects([project, ...projects]);
-    setNewProject({ title: '', link: '', stack: '', image: '' });
-    setIsAddProjectOpen(false);
+    try {
+      await setDoc(doc(db, 'projects', projectId), projectData);
+      setNewProject({ title: '', link: '', stack: '', image: '' });
+      setIsAddProjectOpen(false);
+    } catch (error) {
+      handleFirestoreError(error, OperationType.CREATE, `projects/${projectId}`);
+    }
   };
 
-  const handleAddSocial = (e: React.FormEvent) => {
+  const handleAddSocial = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
-    const formattedLink = formatURL(newSocial.link);
+    // Auto-correction: Replace @ with / for specific patterns
+    let sanitizedURL = newSocial.link.trim();
+    if (sanitizedURL.includes('t.me@')) sanitizedURL = sanitizedURL.replace('t.me@', 't.me/');
+    else if (sanitizedURL.includes('@') && !sanitizedURL.includes('.com')) {
+       sanitizedURL = sanitizedURL.replace('@', '/');
+    }
+
+    const formattedLink = formatURL(sanitizedURL);
 
     if (!isValidSecureURL(formattedLink)) {
       setError('Invalid URL. Only secure https:// links are allowed.');
@@ -139,22 +156,30 @@ export default function AdminDashboard({
     const { name, icon } = detectSocialPlatform(formattedLink);
     
     if (editingSocialId) {
-      setSocials(socials.map(s => s.id === editingSocialId ? { 
-        ...s, 
-        name, 
-        link: formattedLink, 
-        icon 
-      } : s));
-      setEditingSocialId(null);
+      try {
+        await updateDoc(doc(db, 'socials', editingSocialId), {
+          name,
+          link: formattedLink,
+          icon
+        });
+        setEditingSocialId(null);
+      } catch (error) {
+        handleFirestoreError(error, OperationType.UPDATE, `socials/${editingSocialId}`);
+      }
     } else {
-      const social: SocialLink = {
-        id: Date.now().toString(),
+      const socialId = Date.now().toString();
+      const socialData = {
         name,
         link: formattedLink,
         icon,
-        color: 'hover:bg-cyan-500/20 hover:text-cyan-400'
+        color: 'hover:bg-cyan-500/20 hover:text-cyan-400',
+        createdAt: serverTimestamp()
       };
-      setSocials([...socials, social]);
+      try {
+        await setDoc(doc(db, 'socials', socialId), socialData);
+      } catch (error) {
+        handleFirestoreError(error, OperationType.CREATE, `socials/${socialId}`);
+      }
     }
     
     setNewSocial({ link: '' });
@@ -169,12 +194,20 @@ export default function AdminDashboard({
     setIsAddSocialOpen(true);
   };
 
-  const deleteProject = (id: string) => {
-    setProjects(projects.filter(p => p.id !== id));
+  const deleteProject = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'projects', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `projects/${id}`);
+    }
   };
 
-  const deleteSocial = (id: string) => {
-    setSocials(socials.filter(s => s.id !== id));
+  const deleteSocial = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'socials', id));
+    } catch (error) {
+      handleFirestoreError(error, OperationType.DELETE, `socials/${id}`);
+    }
   };
 
 
@@ -192,10 +225,20 @@ export default function AdminDashboard({
       {/* Update Profile Picture Section */}
       <div className="glass-card p-6 md:p-8 flex flex-col md:flex-row items-center gap-8 border-cyan-500/20">
         <div className="relative group">
-          <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden border-2 border-cyan-500/30 glow-cyan">
+          <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden border-2 border-cyan-500/30 glow-cyan relative bg-[#020617]">
             {isDefaultImage ? (
-              <div className="w-full h-full bg-white/10 flex items-center justify-center">
-                <LucideIcons.User size={48} className="text-cyan-400 opacity-30" />
+              <div className="w-full h-full flex items-center justify-center">
+                <div className="absolute inset-0 bg-cyan-500/5 animate-pulse" />
+                <motion.div
+                  animate={{ 
+                    scale: [0.9, 1.1, 0.9],
+                    rotate: [0, 5, -5, 0]
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                >
+                  <LucideIcons.User size={48} className="text-cyan-400 drop-shadow-[0_0_10px_rgba(34,211,238,0.5)]" />
+                </motion.div>
+                <div className="absolute bottom-2 inset-x-0 text-[8px] text-center text-cyan-400/50 font-mono tracking-widest uppercase">IDLE</div>
               </div>
             ) : (
               <img src={profileImage} alt="Current Profile" className="w-full h-full object-cover" />
