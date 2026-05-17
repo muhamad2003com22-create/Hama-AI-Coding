@@ -21,13 +21,13 @@ export default function SocialHub({ socials }: SocialHubProps) {
   };
 
   return (
-    <section id="socials" className="py-24 space-y-12">
+    <section id="socials" className="py-12 md:py-24 space-y-6 md:space-y-12">
       <div className="space-y-2">
         <h2 className="text-4xl font-bold">{t('nav.socials')}</h2>
         <div className="h-1 w-20 bg-cyan-500 rounded-full" />
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6">
+      <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-6">
         {socials.map((social, i) => {
           const IconComponent = getIcon(social.icon);
           return (
@@ -38,19 +38,19 @@ export default function SocialHub({ socials }: SocialHubProps) {
                 rel="noopener noreferrer"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                whileTap={{ scale: 0.96, transition: { duration: 0.075 } }}
-                transition={{ delay: i * 0.1 }}
+                whileTap={{ scale: 0.92, transition: { duration: 0 } }}
+                transition={{ delay: i * 0.04, duration: 0.3 }}
                 viewport={{ once: true }}
-                className={`glass-card p-10 flex flex-col items-center justify-center gap-6 group transition-all duration-300 h-full rounded-[40px] border-white/5 hover:border-white/20 transform-gpu touch-manipulation active:scale-95 ${social.color}`}
+                className={`glass-card gradient-border gradient-border-glow p-4 sm:p-10 flex flex-col items-center justify-center gap-2 sm:gap-6 group transition-all duration-300 h-full rounded-[20px] sm:rounded-[40px] border-white/5 hover:border-white/20 transform-gpu touch-manipulation active:scale-[0.94] select-none cursor-pointer ${social.color}`}
               >
-                <div className="p-5 rounded-2xl bg-white/5 group-hover:bg-cyan-500/10 transition-all duration-500 shadow-inner">
-                  <IconComponent size={40} className="transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
+                <div className="p-3 sm:p-5 rounded-xl sm:rounded-2xl bg-white/5 group-hover:bg-cyan-500/10 transition-all duration-500 shadow-inner">
+                  <IconComponent size={24} className="sm:w-10 sm:h-10 transition-transform duration-500 group-hover:scale-110 group-hover:rotate-6" />
                 </div>
                 <div className="text-center">
-                  <span className="text-sm font-bold tracking-[0.1em] uppercase block">{social.name}</span>
-                  <span className="text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">CONNECT</span>
+                  <span className="text-[10px] sm:text-sm font-bold tracking-[0.1em] uppercase block">{social.name}</span>
+                  <span className="hidden sm:block text-[10px] text-slate-500 opacity-0 group-hover:opacity-100 transition-opacity">CONNECT</span>
                 </div>
-                <ExternalLink size={14} className="absolute top-6 right-6 opacity-0 group-hover:opacity-50 transition-opacity" />
+                <ExternalLink size={12} className="absolute top-4 right-4 sm:top-6 sm:right-6 opacity-0 group-hover:opacity-50 transition-opacity" />
               </motion.a>
             </TiltCard>
           );

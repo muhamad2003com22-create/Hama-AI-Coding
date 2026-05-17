@@ -13,27 +13,27 @@ export default function TechStack() {
   ];
 
   return (
-    <section id="stack" className="py-24 space-y-12">
+    <section id="stack" className="py-12 md:py-24 space-y-6 md:space-y-12">
       <div className="space-y-2">
         <h2 className="text-4xl font-bold">{t('stack.title')}</h2>
         <div className="h-1 w-20 bg-cyan-500 rounded-full" />
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6 md:gap-8">
         {stack.map((item, i) => (
           <TiltCard key={item.name} intensity={item.glow ? 20 : 10}>
              <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
-              whileTap={{ scale: 0.96, transition: { duration: 0.075 } }}
-              transition={{ delay: i * 0.05 }}
+              whileTap={{ scale: 0.92, transition: { duration: 0 } }}
+              transition={{ delay: i * 0.02, duration: 0.2 }}
               viewport={{ once: true }}
-              className={`glass-card p-6 flex flex-col items-center justify-center gap-4 group h-full transition-all duration-300 rounded-[32px] transform-gpu touch-manipulation active:scale-95 ${item.glow ? `border-white/20 bg-white/5 shadow-[0_0_30px_-10px] ${item.glow.split(' ')[0]}` : ''}`}
+              className={`glass-card gradient-border p-4 sm:p-6 flex flex-col items-center justify-center gap-3 sm:gap-4 group h-full transition-all duration-300 rounded-[24px] sm:rounded-[32px] transform-gpu touch-manipulation active:scale-[0.92] ${item.glow ? `border-white/20 bg-white/5 shadow-[0_0_30px_-10px] ${item.glow.split(' ')[0]}` : ''}`}
             >
-              <div className={`w-14 h-14 grayscale group-hover:grayscale-0 transition-all duration-500 ${item.glow ? 'grayscale-0' : ''}`}>
+              <div className={`w-10 h-10 sm:w-14 sm:h-14 grayscale group-hover:grayscale-0 transition-all duration-500 ${item.glow ? 'grayscale-0' : ''}`}>
                 <img src={item.icon} alt={item.name} className="w-full h-full object-contain" />
               </div>
-              <span className={`text-[10px] font-bold tracking-[0.2em] transition-colors ${item.glow ? item.glow.split(' ')[1] : 'text-slate-500 group-hover:text-cyan-400'}`}>
+              <span className={`text-[8px] sm:text-[10px] font-bold tracking-[0.2em] transition-colors ${item.glow ? item.glow.split(' ')[1] : 'text-slate-500 group-hover:text-cyan-400'}`}>
                 {item.name.toUpperCase()}
               </span>
             </motion.div>

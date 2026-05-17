@@ -94,7 +94,7 @@ export default function App() {
     switch (activeSection) {
       case 'home':
         return (
-          <div className="flex flex-col gap-y-16 md:gap-y-24">
+          <div className="flex flex-col gap-y-8 md:gap-y-24">
             <Hero profileImage={profileImage} />
             <TechStack />
             <Projects projects={projects} />
@@ -111,10 +111,13 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen relative selection:bg-cyan-500/30">
+    <div className="min-h-[100dvh] relative selection:bg-cyan-500/30">
       {/* Premium 3D Workspace Background */}
       <div className="bg-mesh" />
-      <div className="fixed inset-0 bg-black/40 backdrop-blur-[2px] pointer-events-none z-[-10]" />
+      <div 
+        className="fixed inset-0 backdrop-blur-[2px] pointer-events-none z-[-10]" 
+        style={{ backgroundColor: 'var(--overlay-bg)' }}
+      />
       <div className="scanline absolute inset-0 z-[-10] opacity-20 pointer-events-none" />
       
       {/* Decorative Orbs */}
@@ -150,17 +153,17 @@ export default function App() {
       />
 
       <main className={cn(
-        "px-4 sm:px-6 md:px-12 lg:px-24 pb-32 md:pb-12 transition-all duration-500 relative z-10",
-        i18n.dir() === 'rtl' ? "md:mr-28 lg:md:mr-32" : "md:ml-28 lg:md:ml-32"
+        "px-4 lg:px-24 pb-8 transition-all duration-500 relative z-10",
+        i18n.dir() === 'rtl' ? "lg:mr-32" : "lg:ml-32"
       )}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto overflow-hidden">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSection + i18n.language}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.15, ease: "easeOut" }}
             >
               {renderContent()}
             </motion.div>
@@ -181,10 +184,10 @@ export default function App() {
 
       {/* Footer Branding */}
       <footer className={cn(
-        "py-12 border-t border-white/5 mb-24 md:mb-0",
-        i18n.dir() === 'rtl' ? "md:mr-28 lg:md:mr-32" : "md:ml-28 lg:md:ml-32"
+        "py-8 pb-20 lg:pb-8 border-t border-white/5 relative z-10",
+        i18n.dir() === 'rtl' ? "lg:mr-32" : "lg:ml-32"
       )}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-12 opacity-30 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-[0.2em] font-mono">
+        <div className="max-w-7xl mx-auto px-4 lg:px-12 opacity-30 flex flex-col md:flex-row justify-between items-center gap-4 text-xs tracking-[0.2em] font-mono">
           <span>&copy; 2026 HAMA PORTFOLIO</span>
           <span>BUILT WITH PRECISION & INTELLIGENCE</span>
           <span>EST. KURDISTAN</span>

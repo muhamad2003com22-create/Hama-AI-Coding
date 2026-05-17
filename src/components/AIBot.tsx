@@ -51,7 +51,7 @@ export default function AIBot() {
   };
 
   return (
-    <div className="fixed bottom-20 md:bottom-8 right-4 md:right-8 z-50">
+    <div className="fixed bottom-24 lg:bottom-8 right-4 lg:right-8 z-50">
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -59,6 +59,7 @@ export default function AIBot() {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 50, scale: 0.9 }}
             className="glass-card w-[calc(100vw-2rem)] md:w-96 h-[500px] max-h-[70vh] flex flex-col mb-6 glow-cyan overflow-hidden"
+            transition={{ duration: 0.15, ease: "easeOut" }}
           >
             {/* Header */}
             <div className="px-6 py-4 bg-white/5 border-b border-white/10 flex justify-between items-center group">
@@ -138,8 +139,8 @@ export default function AIBot() {
       <motion.button
         onClick={() => setIsOpen(!isOpen)}
         whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg hover:shadow-[0_0_20px_#22d3ee] transition-all p-0"
+        whileTap={{ scale: 0.9, transition: { duration: 0 } }}
+        className="w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-lg hover:shadow-[0_0_20px_#22d3ee] transition-all p-0 select-none cursor-pointer"
       >
         {isOpen ? <X size={24} /> : <MessageSquare size={24} />}
       </motion.button>
