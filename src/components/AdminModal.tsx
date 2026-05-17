@@ -16,49 +16,30 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [isFlipped, setIsFlipped] = useState(false);
-  const [attempts, setAttempts] = useState(0);
-  const [isLocked, setIsLocked] = useState(false);
-  const [lockTimer, setLockTimer] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (isLocked) return;
+    setIsLoading(true);
+    setError('');
 
-    // In a real production app, this would be a server-side request
-    // and the password would be retrieved from an environment variable.
-    const ADMIN_USER = 'hamait';
-    const ADMIN_PASS = 'Hamawwe0770';
+    // Hardcoded local credentials as requested
+    const AUTH_USERNAME = 'hamait';
+    const AUTH_PASSWORD = 'Hamawwe0770';
 
-    if (username === ADMIN_USER && password === ADMIN_PASS) {
-      onLogin(true);
-      onClose();
-      setError('');
-      setAttempts(0);
-    } else {
-      const newAttempts = attempts + 1;
-      setAttempts(newAttempts);
-      
-      if (newAttempts >= 3) {
-        setIsLocked(true);
-        setLockTimer(60);
-        setError('System Locked: Too many failed attempts. Wait 60 seconds.');
-        const interval = setInterval(() => {
-          setLockTimer((prev) => {
-            if (prev <= 1) {
-              clearInterval(interval);
-              setIsLocked(false);
-              setAttempts(0);
-              setError('');
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
+    setTimeout(() => {
+      if (username === AUTH_USERNAME && password === AUTH_PASSWORD) {
+        onLogin(true);
+        onClose();
+        setUsername('');
+        setPassword('');
       } else {
-        setError('Invalid Username or Password');
+        setError('Access Denied. Invalid Credentials.');
       }
-    }
+      setIsLoading(false);
+    }, 500);
   };
+
 
   return (
     <AnimatePresence>
@@ -118,7 +99,8 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
                         value={username}
                         onChange={(e) => setUsername(e.target.value)}
                         className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 focus:border-cyan-500 outline-none transition-all"
-                        placeholder="Cipher Name"
+                        placeholder="Username"
+                        required
                       />
                     </div>
                   </div>
@@ -131,28 +113,37 @@ export default function AdminModal({ isOpen, onClose, onLogin }: AdminModalProps
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 focus:border-cyan-500 outline-none transition-all"
-                        placeholder="Key Code"
+                        placeholder="Password"
+                        required
                       />
                     </div>
                   </div>
 
                   {error && (
-                    <p className="text-red-400 text-xs text-center">{error}</p>
+                    <p className="text-red-400 text-xs text-center bg-red-400/10 p-2 rounded">{error}</p>
                   )}
 
                   <button
                     type="submit"
-                    disabled={isLocked}
+                    disabled={isLoading}
                     className={cn(
-                      "w-full py-4 rounded-xl font-bold shadow-lg transition-all duration-75 transform-gpu touch-manipulation active:scale-[0.98]",
-                      isLocked 
+                      "w-full py-4 rounded-xl font-bold shadow-lg transition-all duration-75 transform-gpu touch-manipulation active:scale-[0.98] flex items-center justify-center gap-3",
+                      isLoading 
                         ? "bg-slate-800 text-slate-500 cursor-not-allowed" 
                         : "bg-gradient-to-r from-cyan-500 to-blue-600 hover:shadow-[0_0_20px_#22d3ee]"
                     )}
                   >
-                    {isLocked ? `Locked (${lockTimer}s)` : 'Enter Dashboard'}
+                    {isLoading ? (
+                      <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <ShieldCheck size={20} />
+                        Login
+                      </>
+                    )}
                   </button>
                 </form>
+
               </div>
             </motion.div>
           </div>

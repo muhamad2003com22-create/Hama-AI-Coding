@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import * as LucideIcons from 'lucide-react';
-import { Plus, Trash2, Edit2, BarChart3, Globe, Share2, Save, X, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Edit2, BarChart3, Globe, Share2, Share, Save, X, ExternalLink } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { Project, SocialLink } from '../types';
 import { sanitizeInput, isValidSecureURL, formatURL } from '../lib/utils';
@@ -16,7 +16,15 @@ interface AdminDashboardProps {
   onLogout: () => void;
 }
 
-export default function AdminDashboard({ projects, setProjects, socials, setSocials, profileImage, setProfileImage, onLogout }: AdminDashboardProps) {
+export default function AdminDashboard({ 
+  projects, 
+  setProjects, 
+  socials, 
+  setSocials, 
+  profileImage, 
+  setProfileImage, 
+  onLogout 
+}: AdminDashboardProps) {
   const { t } = useTranslation();
 
   const getIcon = (name: string) => {
@@ -29,7 +37,7 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
   const [editingSocialId, setEditingSocialId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Inactivity timeout logic (15 minutes)
+  // Inactivity timeout logic (15 minutes) remains for security
   useEffect(() => {
     let timeout: NodeJS.Timeout;
 
@@ -37,7 +45,6 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
       clearTimeout(timeout);
       timeout = setTimeout(() => {
         onLogout();
-        console.warn('Session expired due to inactivity.');
       }, 15 * 60 * 1000); // 15 minutes
     };
 
@@ -112,7 +119,8 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
       image: newProject.image || '',
       stack: sanitizeInput(newProject.stack).split(',').map(s => s.trim())
     };
-    setProjects([...projects, project]);
+
+    setProjects([project, ...projects]);
     setNewProject({ title: '', link: '', stack: '', image: '' });
     setIsAddProjectOpen(false);
   };
@@ -168,6 +176,7 @@ export default function AdminDashboard({ projects, setProjects, socials, setSoci
   const deleteSocial = (id: string) => {
     setSocials(socials.filter(s => s.id !== id));
   };
+
 
   const isDefaultImage = profileImage === '/profile.jpg' || !profileImage;
 

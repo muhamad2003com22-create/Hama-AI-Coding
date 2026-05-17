@@ -59,7 +59,7 @@ export default function App() {
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
-  // States managed by Admin
+  // Local state for app data (Firebase removed)
   const [projects, setProjects] = useState<Project[]>(INITIAL_PROJECTS);
   const [socials, setSocials] = useState<SocialLink[]>(INITIAL_SOCIALS);
   const [profileImage, setProfileImage] = useState('/profile.jpg');
